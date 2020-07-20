@@ -19,7 +19,7 @@
     <context:component-scan base-package="com.imooc.o2o.service"/>
 <!--    配置事物管理器-->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" value="dataSource"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 <!--    开启事物注解-->
     <tx:annotation-driven transaction-manager="transactionManager"/>
