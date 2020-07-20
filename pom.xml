@@ -142,6 +142,14 @@
       <artifactId>jedis</artifactId>
       <version>2.9.0</version>
     </dependency>
+
+<!--      图片处理-->
+      <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+      <dependency>
+          <groupId>net.coobird</groupId>
+          <artifactId>thumbnailator</artifactId>
+          <version>0.4.11</version>
+      </dependency>
   </dependencies>
 
   <build>
