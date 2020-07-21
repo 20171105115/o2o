@@ -9,6 +9,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -38,20 +39,20 @@ public class ImageUtil {
 
     /**
      * 处理缩略图并且返回图片的相对子路径
-     * @param thumbnail
+     * @param shopImgInputStream
      * @param targetAddr
      * @return
      */
-    public static String genericThumbnail(File thumbnail,String targetAddr){
+    public static String genericThumbnail(InputStream shopImgInputStream,String fileName, String targetAddr){
         String realFileName = getRandomFileName();
-        String extension = getFileExtension(thumbnail);
+        String extension = getFileExtension(fileName);
         makeDirPath(targetAddr);
         String relativeAddr = targetAddr + realFileName + extension;
         logger.debug("current relativeAddr is:" + relativeAddr);
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
         logger.debug("current compltet addr is :" + dest.toString());
         try {
-            Thumbnails.of(thumbnail).size(200,200)
+            Thumbnails.of(shopImgInputStream).size(200,200)
                     .watermark(Positions.BOTTOM_LEFT, ImageIO.read(new File(basePath + "/watermark.jpg")),0.8f)
                     .outputQuality(0.8f).toFile(dest);
         }catch (IOException e){
@@ -77,11 +78,11 @@ public class ImageUtil {
 
     /**
      * 获取输入文件名的扩展名
-     * @param thumbnail
+     * @param fileName
      * @return
      */
-    private static String getFileExtension(File thumbnail) {
-        return thumbnail.getName().substring(thumbnail.getName().lastIndexOf("."));
+    private static String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
     /**

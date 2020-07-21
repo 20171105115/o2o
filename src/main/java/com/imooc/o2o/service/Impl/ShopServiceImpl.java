@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 
 @Service
@@ -28,12 +29,13 @@ public class ShopServiceImpl implements ShopService {
      * 3、图片空值判断以及添加图片
      * 4、更新店铺信息
      * @param shop
-     * @param shopImg
+     * @param fileName
+     * @param shopImgInputStream
      * @return
      */
     @Override
     @Transactional
-    public ShopExecution addShop(Shop shop, File shopImg) {
+    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) {
         if (shop == null){//空值判断
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }else{
@@ -47,9 +49,9 @@ public class ShopServiceImpl implements ShopService {
                 if (effectedNum <= 0){
                     throw new RuntimeException("添加店铺失败");
                 }else {
-                    if (shopImg != null){//图片空值判断以及添加图片
+                    if (shopImgInputStream != null){//图片空值判断以及添加图片
                         try {
-                            addShopImg(shop,shopImg);//添加图片，图片地址会存在shop中
+                            addShopImg(shop,shopImgInputStream,fileName);//添加图片，图片地址会存在shop中
                         }catch (Exception e){
                             throw new ShopException("insert shopImg is error: "+e.getMessage());
                         }
@@ -67,9 +69,9 @@ public class ShopServiceImpl implements ShopService {
         }
     }
 
-    private void addShopImg(Shop shop, File shopImg) {
+    private void addShopImg(Shop shop, InputStream shopImgInputStream,String fileName) {
         String dest = PathUtil.getShopImagePath(shop.getShopId());
-        String relativeAddr = ImageUtil.genericThumbnail(shopImg,dest);
+        String relativeAddr = ImageUtil.genericThumbnail(shopImgInputStream,fileName,dest);
         shop.setShopImg(relativeAddr);
     }
 }
