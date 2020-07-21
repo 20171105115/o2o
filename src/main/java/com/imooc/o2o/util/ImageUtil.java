@@ -2,6 +2,8 @@ package com.imooc.o2o.util;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.imageio.ImageIO;
@@ -16,18 +18,44 @@ public class ImageUtil {
     private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
     private static SimpleDateFormat simple = new SimpleDateFormat("yyyyMMddHHmmss");
     private static Random random = new Random();
+    private static Logger logger = LoggerFactory.getLogger(ImageUtil.class);
 
-    public static String genericThumbnail(CommonsMultipartFile thumbnail,String targetAddr){
+    /**
+     * 将CommonsMultipartFile转化成File，因为Spring用于接收File的是multipartFile接口
+     * @param cFile
+     * @return
+     */
+    public static File transferCommonsMultipartFileToFile(CommonsMultipartFile cFile){
+        File newFile = new File(cFile.getOriginalFilename());
+        try {
+            cFile.transferTo(newFile);
+        } catch (IOException e) {
+            logger.error(e.toString());
+            e.printStackTrace();
+        }
+        return newFile;
+    }
+
+    /**
+     * 处理缩略图并且返回图片的相对子路径
+     * @param thumbnail
+     * @param targetAddr
+     * @return
+     */
+    public static String genericThumbnail(File thumbnail,String targetAddr){
         String realFileName = getRandomFileName();
         String extension = getFileExtension(thumbnail);
         makeDirPath(targetAddr);
         String relativeAddr = targetAddr + realFileName + extension;
-        File dest = new File(PathUtil.getImgBasePath() + realFileName);
+        logger.debug("current relativeAddr is:" + relativeAddr);
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
+        logger.debug("current compltet addr is :" + dest.toString());
         try {
-            Thumbnails.of(thumbnail.getInputStream()).size(200,200)
+            Thumbnails.of(thumbnail).size(200,200)
                     .watermark(Positions.BOTTOM_LEFT, ImageIO.read(new File(basePath + "/watermark.jpg")),0.8f)
                     .outputQuality(0.8f).toFile(dest);
         }catch (IOException e){
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
         return relativeAddr;
@@ -52,8 +80,8 @@ public class ImageUtil {
      * @param thumbnail
      * @return
      */
-    private static String getFileExtension(CommonsMultipartFile thumbnail) {
-        return thumbnail.getOriginalFilename().substring(thumbnail.getOriginalFilename().lastIndexOf("."));
+    private static String getFileExtension(File thumbnail) {
+        return thumbnail.getName().substring(thumbnail.getName().lastIndexOf("."));
     }
 
     /**
