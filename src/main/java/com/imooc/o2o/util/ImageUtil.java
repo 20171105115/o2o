@@ -44,17 +44,17 @@ public class ImageUtil {
      * @return
      */
     public static String genericThumbnail(InputStream shopImgInputStream,String fileName, String targetAddr){
-        String realFileName = getRandomFileName();
-        String extension = getFileExtension(fileName);
-        makeDirPath(targetAddr);
-        String relativeAddr = targetAddr + realFileName + extension;
+        String realFileName = getRandomFileName();//取随机文件名
+        String extension = getFileExtension(fileName);//获取文件后缀
+        makeDirPath(targetAddr);//创建目标路径
+        String relativeAddr = targetAddr + realFileName + extension;//相对路径
         logger.debug("current relativeAddr is:" + relativeAddr);
-        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);//绝对路径
         logger.debug("current compltet addr is :" + dest.toString());
         try {
             Thumbnails.of(shopImgInputStream).size(200,200)
                     .watermark(Positions.BOTTOM_LEFT, ImageIO.read(new File(basePath + "/watermark.jpg")),0.8f)
-                    .outputQuality(0.8f).toFile(dest);
+                    .outputQuality(0.8f).toFile(dest);//存储图片
         }catch (IOException e){
             logger.error(e.getMessage());
             e.printStackTrace();
