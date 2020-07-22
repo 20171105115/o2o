@@ -1,5 +1,5 @@
 $(function () {
-    var initUrl = '/o2o/shop/getshopinitinfo';
+    var initUrl = '/o2o/shopadmin/getshopinitinfo';
     var registerShopUrl = '/o2o/shopadmin/registershop';
     getShopInitInfo();
 
@@ -11,10 +11,12 @@ $(function () {
                 data.shopCategoryList.map(function (item,index) {
                     //数组中的每个元素都会执行这个函数,item当前值,index索引值
                     tempHtml += '<option data-id="' + item.shopCategoryId + '">'
+                        + item.shopCategory.shopCategoryName
                     + '</option>';
                 });
                 data.areaList.map(function (item,index) {
                     tempAreaHtml += '<option data-id="' + item.areaId + '">'
+                        + item.area.areaName
                     + '</option>';
                 });
                 $('#shop-category').html(tempHtml);
