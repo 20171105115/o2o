@@ -32,17 +32,17 @@ public class HttpServletRequestUtil {
         }
     }
 
-    public static String getString(HttpServletRequest request, String key){
+    public static String getString(HttpServletRequest request, String key) {
         try {
-            String result = request.getParameter("key");
-            if (result!=null){
-                result = result.trim();//去掉两边的空格
+            String result = request.getParameter(key);
+            if (result != null) {
+                result = result.trim();
             }
-            if ("".equals(result)){
+            if ("".equals(result)) {
                 result = null;
             }
             return result;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

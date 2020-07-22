@@ -29,6 +29,15 @@
         <property name="prefix" value="/WEB-INF/html/"/>
     </bean>
 
+<!--    定义文件上传解析器  不解析的话，会因为文件流的缘故，导致其他session中的key无法识别-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+<!--        设置文件最大20M-->
+        <property name="maxUploadSize" value="20971520"/>
+<!--        设置最大内存-->
+        <property name="maxInMemorySize" value="20971520"/>
+    </bean>
+
 <!--    扫描web相关的包-->
     <context:component-scan base-package="com.imooc.o2o.web"/>
 
