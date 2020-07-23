@@ -71,6 +71,59 @@ public class ShopServiceImpl implements ShopService {
         }
     }
 
+    /**
+     *修改店铺信息，
+     * 1、删除之前的路径（ImageUtil中的方法)
+     * 2、判断有没有图片流传入
+     * 3、修改信息
+     * @param shop
+     * @param shopImg
+     * @param fileName
+     * @return
+     */
+    @Override
+    @Transactional
+    public ShopExecution modifyShop(Shop shop, InputStream shopImg, String fileName) {
+        if (shop == null || shop.getShopId() == null){
+            return new ShopExecution(ShopStateEnum.NULL_SHOP);
+        }else{
+            try{
+                //1、判断是否需要修改图片
+                if (shopImg != null && fileName != null && !"".equals(fileName)){
+                    Shop tempShop = shopDao.queryShopById(shop.getShopId());
+                    String relativePath = tempShop.getShopImg();
+                    if (relativePath != null){//如果之前的图片地址不为空
+                        ImageUtil.deleteFileOrPath(relativePath);
+                    }
+                    addShopImg(shop,shopImg,fileName);//将新的文件保存到shop里面
+                }
+                //2、修改店铺信息
+                shop.setLastEditTime(new Date());
+                int effectedNum = shopDao.updateShop(shop);
+                if (effectedNum <= 0){
+                    return new ShopExecution(ShopStateEnum.INNER_ERROR);
+                }else {
+                    Shop newShop = shopDao.queryShopById(shop.getShopId());
+                    return new ShopExecution(ShopStateEnum.SUCCESS,newShop);
+                }
+            }catch (Exception e){
+                throw new ShopException("更新店铺信息失败" + e.getMessage());
+            }
+        }
+
+    }
+
+    @Override
+    public Shop getShopById(long shopId) {
+        return shopDao.queryShopById(shopId);
+    }
+
+    /**
+     * 添加图片，调用图片处理的方法
+     * @param shop
+     * @param shopImgInputStream
+     * @param fileName
+     */
     private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
         String dest = PathUtil.getShopImagePath(shop.getShopId());
         String relativeAddr = ImageUtil.genericThumbnail(shopImgInputStream, fileName, dest);

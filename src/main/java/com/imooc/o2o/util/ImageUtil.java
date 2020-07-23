@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -96,6 +97,19 @@ public class ImageUtil {
         String nowTime = simple.format(new Date());
         return nowTime+rannum;
 
+    }
+
+    public static void deleteFileOrPath(String filePath){
+        File fileOrPath = new File(PathUtil.getImgBasePath() + filePath);
+        if (fileOrPath.exists()){
+            if (fileOrPath.isDirectory()){
+                File[] files = fileOrPath.listFiles();//如果是文件，则找出下面所有的文件
+                for (int i=0 ;i < files.length ; i++){
+                    files[i].delete();
+                }
+            }
+            fileOrPath.delete();
+        }
     }
 
 

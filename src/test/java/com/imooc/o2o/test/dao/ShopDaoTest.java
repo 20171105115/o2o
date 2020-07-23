@@ -1,6 +1,7 @@
 package com.imooc.o2o.test.dao;
 
 import com.imooc.o2o.dao.ShopDao;
+import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Area;
 import com.imooc.o2o.entity.PersonInfo;
 import com.imooc.o2o.entity.Shop;
@@ -8,6 +9,10 @@ import com.imooc.o2o.entity.ShopCategory;
 import com.imooc.o2o.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -56,4 +61,6 @@ public class ShopDaoTest extends BaseTest {
         System.out.println(shop.getShopName());
         System.out.println(shop.getArea().getAreaName());
     }
+
+
 }
