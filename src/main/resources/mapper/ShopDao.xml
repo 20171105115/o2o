@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.imooc.o2o.dao.ShopDao">
+
+    <resultMap id="shopMap" type="com.imooc.o2o.entity.Shop">
+        <id column="shop_id" property="shopId"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="shop_desc" property="shopDesc"/>
+        <result column="shop_addr" property="shopAddr"/>
+        <result column="shop_img" property="shopImg"/>
+        <result column="phone" property="phone"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_edit_time" property="lastEditTime"/>
+        <result column="enable_status" property="enableStatus"/>
+        <result column="advice" property="advice"/>
+<!--        附属类要求写在主类中的名字，其主键是什么，类型是哪个类-->
+        <association property="shopCategory" column="shop_category_id" javaType="com.imooc.o2o.entity.ShopCategory">
+            <id column="shop_category_id" property="shopCategoryId"/>
+            <result column="shop_category_name" property="shopCategoryName"/>
+        </association>
+        <association property="area" column="area_id" javaType="com.imooc.o2o.entity.Area">
+            <id column="area_id" property="areaId"/>
+            <result column="area_name" property="areaName"/>
+        </association>
+        <association property="owner" column="user_id" javaType="com.imooc.o2o.entity.PersonInfo">
+            <id column="user_id" property="userId"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+<!--外连接只适用于两张表的情况下-->
+    <select id="queryShopById" resultMap="shopMap" parameterType="Long">
+        select
+        s.shop_id,
+        s.shop_name,
+        s.shop_desc,
+        s.shop_addr,
+        s.shop_img,
+        s.phone,
+        s.create_time,
+        s.last_edit_time,
+        s.enable_status,
+        s.priority,
+        s.advice,
+        a.area_id,
+        a.area_name,
+        sc.shop_category_id,
+        sc.shop_category_name
+        from
+        tb_shop s,
+        tb_area a,
+        tb_shop_category sc
+        where
+        s.shop_category_id = sc.shop_category_id
+        and a.area_id = s.area_id
+        and s.shop_id=#{shopId}
+    </select>
+
     <insert id="insertShop" useGeneratedKeys="true" keyProperty="shopId" keyColumn="shop_id">
         insert
         into tb_shop(owner_id,area_id,shop_category_id,shop_name,shop_desc,shop_addr,shop_img,phone,enable_status,priority,create_time,last_edit_time,advice)

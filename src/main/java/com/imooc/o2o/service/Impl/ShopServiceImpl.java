@@ -28,6 +28,7 @@ public class ShopServiceImpl implements ShopService {
      * 2、添加店铺信息
      * 3、图片空值判断以及添加图片
      * 4、更新店铺信息
+     *
      * @param shop
      * @param fileName
      * @param shopImgInputStream
@@ -36,42 +37,43 @@ public class ShopServiceImpl implements ShopService {
     @Override
     @Transactional
     public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) {
-        if (shop == null){//空值判断
+        if (shop == null) {//空值判断
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
-        }else{
-            //初始值赋值
-            shop.setEnableStatus(0);
-            shop.setCreateTime(new Date());
-            shop.setLastEditTime(new Date());
+        } else {
             try {
-                //更新店铺信息
+                //初始值赋值
+                shop.setEnableStatus(0);
+                shop.setCreateTime(new Date());
+                shop.setLastEditTime(new Date());
+                //更新店铺信息,获取主键，之后插入图片
                 int effectedNum = shopDao.insertShop(shop);
-                if (effectedNum <= 0){
-                    throw new RuntimeException("添加店铺失败");
-                }else {
-                    if (shopImgInputStream != null){//图片空值判断以及添加图片
+
+                if (effectedNum <= 0) {
+                    throw new ShopException("添加店铺失败");
+                } else {
+                    if (shopImgInputStream != null) {//图片空值判断以及添加图片
                         try {
-                            addShopImg(shop,shopImgInputStream,fileName);//添加图片，图片地址会存在shop中
-                        }catch (Exception e){
-                            throw new ShopException("insert shopImg is error: "+e.getMessage());
+                            addShopImg(shop, shopImgInputStream, fileName);//添加图片，图片地址会存在shop中
+                        } catch (Exception e) {
+                            throw new ShopException("insert shopImg is error: " + e.getMessage());
                         }
                         //更新店铺信息
                         effectedNum = shopDao.updateShop(shop);
-                        if (effectedNum <= 0){
+                        if (effectedNum <= 0) {
                             throw new ShopException("添加图片地址失败");
                         }
                     }
                 }
-            }catch (Exception e){
-                throw new ShopException("insert shop is error: "+e.getMessage());
+            } catch (Exception e) {
+                throw new ShopException("insert shop is error: " + e.getMessage());
             }
-            return new ShopExecution(ShopStateEnum.CHECK,shop);
+            return new ShopExecution(ShopStateEnum.CHECK, shop);
         }
     }
 
-    private void addShopImg(Shop shop, InputStream shopImgInputStream,String fileName) {
+    private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
         String dest = PathUtil.getShopImagePath(shop.getShopId());
-        String relativeAddr = ImageUtil.genericThumbnail(shopImgInputStream,fileName,dest);
+        String relativeAddr = ImageUtil.genericThumbnail(shopImgInputStream, fileName, dest);
         shop.setShopImg(relativeAddr);
     }
 }

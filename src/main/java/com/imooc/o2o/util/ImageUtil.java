@@ -23,6 +23,7 @@ public class ImageUtil {
 
     /**
      * 将CommonsMultipartFile转化成File，因为Spring用于接收File的是multipartFile接口
+     * 没用上，最后是将CommonsMultipartFile的IO流传入了
      * @param cFile
      * @return
      */
@@ -39,8 +40,9 @@ public class ImageUtil {
 
     /**
      * 处理缩略图并且返回图片的相对子路径
-     * @param shopImgInputStream
-     * @param targetAddr
+     * @param shopImgInputStream 输入流
+     * @param fileName 文件名
+     * @param targetAddr 要存入的路径
      * @return
      */
     public static String genericThumbnail(InputStream shopImgInputStream,String fileName, String targetAddr){
