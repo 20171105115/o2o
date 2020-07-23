@@ -69,7 +69,7 @@ $(function () {
     //根据点击事件的不同，分别传递信息到不同的URL
     $('#submit').click(function () {
         var shop = {};
-        if (isEdit){
+        if (isEdit){//如果有shopId的话，则表明要修改店铺信息
             shop.shopId = shopId;
         }
         shop.shopName = $('#shop-name').val();

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.security.acl.Owner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,6 +56,17 @@ public class ShopServiceTest extends BaseTest {
         String fileName = file.getName();
         ShopExecution se = shopService.modifyShop(shop,input,fileName);
         System.out.println("新的图片地址为" + se.getShop().getShopImg());
+    }
+
+    @Test
+    public void testGetShopList(){
+        Shop shopCondition = new Shop();
+        PersonInfo owner = new PersonInfo();
+        owner.setUserId(10L);
+        shopCondition.setOwner(owner);
+        ShopExecution se = shopService.getShopList(shopCondition,2,2);
+        System.out.println("第二页的店铺有: "+se.getShopList().size());
+        System.out.println("店铺总数有： "+se.getCount());
     }
 
 }

@@ -7,6 +7,7 @@ import com.imooc.o2o.enums.ShopStateEnum;
 import com.imooc.o2o.exception.ShopException;
 import com.imooc.o2o.service.ShopService;
 import com.imooc.o2o.util.ImageUtil;
+import com.imooc.o2o.util.PageUtil;
 import com.imooc.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ShopServiceImpl implements ShopService {
@@ -113,9 +115,36 @@ public class ShopServiceImpl implements ShopService {
 
     }
 
+    /**
+     * 根据店铺Id查询最初的店铺信息，以便于修改
+     * @param shopId
+     * @return
+     */
     @Override
     public Shop getShopById(long shopId) {
         return shopDao.queryShopById(shopId);
+    }
+
+    /**
+     * 查询店铺列表,分页显示
+     * @param shopCondition
+     * @param pageIndex     页数
+     * @param pageSize      每一页的条数
+     * @return
+     */
+    @Override
+    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+        int rowIndex = PageUtil.pageToRow(pageIndex,pageSize);
+        List<Shop> shopList = shopDao.queryShopList(shopCondition,rowIndex,pageSize);
+        int count = shopDao.queryShopCount(shopCondition);
+        ShopExecution se = new ShopExecution();
+        if (shopList == null){//如果获取失败，则显示内部错误
+            se.setState(ShopStateEnum.INNER_ERROR.getState());
+        }else {
+            se.setShopList(shopList);
+            se.setCount(count);
+        }
+        return se;
     }
 
     /**

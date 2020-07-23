@@ -35,4 +35,13 @@ public interface ShopService {
      * @return
      */
     Shop getShopById(long shopId);
+
+    /**
+     * 查询店铺列表
+     * @param shopCondition
+     * @param pageIndex 页数
+     * @param pageSize 每一页的条数
+     * @return
+     */
+    ShopExecution getShopList(Shop shopCondition,int pageIndex,int pageSize);
 }

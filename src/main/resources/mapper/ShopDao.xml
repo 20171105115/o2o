@@ -56,12 +56,81 @@
         and s.shop_id=#{shopId}
     </select>
 
+<!--    查询根据条件查到的店铺列表-->
+    <select id="queryShopList" resultMap="shopMap">
+        select
+        s.shop_id,
+        s.shop_name,
+        s.shop_addr,
+        s.shop_desc,
+        s.shop_img,
+        s.phone,
+        s.create_time,
+        s.last_edit_time,
+        s.priority,
+        s.advice,
+        s.enable_status,
+        a.area_id,
+        a.area_name,
+        sc.shop_category_id,
+        sc.shop_category_name
+        from
+        tb_shop s,
+        tb_area a,
+        tb_shop_category sc
+        <where>
+            <if test="shopCondition.shopName!=null">
+                and s.shop_name like '%${shopCondition.shopName}%'
+            </if>
+            <if test="shopCondition.area!=null and shopCondition.area.areaId!=null">
+                and s.area_id = #{shopCondition.area.areaId}
+            </if>
+            <if test="shopCondition.shopCategory!=null and shopCondition.shopCategory.shopCategoryId!=null">
+                and s.shop_category_id = #{shopCondition.shopCategory.shopCategoryId}
+            </if>
+            <if test="shopCondition.owner!=null and shopCondition.owner.userId!=null">
+                and s.owner_id = #{shopCondition.owner.userId}
+            </if>
+            and s.shop_category_id = sc.shop_category_id
+            and a.area_id = s.area_id
+        </where>
+        ORDER BY s.priority DESC
+        Limit #{rowIndex},#{pageSize}
+    </select>
+
+<!--    查询根据条件查到的店铺的总数-->
+    <select id="queryShopCount" resultType="int">
+        select
+        count(1)
+        from
+        tb_shop s,
+        tb_area a,
+        tb_shop_category sc
+        <where>
+            <if test="shopCondition.shopName!=null">
+                and s.shop_name like '%${shopCondition.shopName}%'
+            </if>
+            <if test="shopCondition.area!=null and shopCondition.area.areaId!=null">
+                and s.area_id = #{shopCondition.area.areaId}
+            </if>
+            <if test="shopCondition.shopCategory!=null and shopCondition.shopCategory.shopCategoryId!=null">
+                and s.shop_category_id = #{shopCondition.shopCategory.shopCategoryId}
+            </if>
+            <if test="shopCondition.owner!=null and shopCondition.owner.userId!=null">
+                and s.owner_id = #{shopCondition.owner.userId}
+            </if>
+            and s.shop_category_id = sc.shop_category_id
+            and a.area_id = s.area_id
+        </where>
+
+    </select>
+<!--    插入店铺（注册店铺)-->
     <insert id="insertShop" useGeneratedKeys="true" keyProperty="shopId" keyColumn="shop_id">
         insert
         into tb_shop(owner_id,area_id,shop_category_id,shop_name,shop_desc,shop_addr,shop_img,phone,enable_status,priority,create_time,last_edit_time,advice)
         value (#{owner.userId},#{area.areaId},#{shopCategory.shopCategoryId},#{shopName},#{shopDesc},#{shopAddr},#{shopImg},#{phone},#{enableStatus},#{priority},#{createTime},#{lastEditTime},#{advice})
     </insert>
-    
+<!--    更新店铺信息-->
     <update id="updateShop" parameterType="com.imooc.o2o.entity.Shop">
         update tb_shop
         <set>

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -60,6 +61,24 @@ public class ShopDaoTest extends BaseTest {
         Shop shop  = shopDao.queryShopById(shopId);
         System.out.println(shop.getShopName());
         System.out.println(shop.getArea().getAreaName());
+    }
+
+    @Test
+    public void testQueryShopListAndCount(){
+        Shop shopCondition = new Shop();
+//        shopCondition.setShopName("大");
+        PersonInfo owner = new PersonInfo();
+        owner.setUserId(1L);
+        shopCondition.setOwner(owner);
+
+        Area area = new Area();
+        area.setAreaId(3);
+        shopCondition.setArea(area);
+
+        List<Shop> shopList = shopDao.queryShopList(shopCondition,0,18);
+        int i = shopDao.queryShopCount(shopCondition);
+        System.out.println("i==" + i);//测试总数
+        System.out.println(shopList.size());
     }
 
 
