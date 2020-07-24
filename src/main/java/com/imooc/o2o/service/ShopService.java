@@ -43,5 +43,5 @@ public interface ShopService {
      * @param pageSize 每一页的条数
      * @return
      */
-    ShopExecution getShopList(Shop shopCondition,int pageIndex,int pageSize);
+    ShopExecution getShopListAndCount(Shop shopCondition,int pageIndex,int pageSize);
 }

@@ -12,4 +12,14 @@ public class ShopAdminController {
     public String shopOperation(){
         return "shop/shopoperation";
     }
+
+    @RequestMapping(value = "/shoplist")//店铺列表页面
+    public String shopList(){
+        return "shop/shoplist";
+    }
+
+    @RequestMapping(value = "/shopmanagement")//店铺具体操作功能页面
+    public String shopManagement(){
+        return "shop/shopmanagement";
+    }
 }

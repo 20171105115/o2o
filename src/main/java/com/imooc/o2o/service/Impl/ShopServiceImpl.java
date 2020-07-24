@@ -127,13 +127,13 @@ public class ShopServiceImpl implements ShopService {
 
     /**
      * 查询店铺列表,分页显示
-     * @param shopCondition
+     * @param shopCondition 判断条件
      * @param pageIndex     页数
      * @param pageSize      每一页的条数
      * @return
      */
     @Override
-    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+    public ShopExecution getShopListAndCount(Shop shopCondition, int pageIndex, int pageSize) {
         int rowIndex = PageUtil.pageToRow(pageIndex,pageSize);
         List<Shop> shopList = shopDao.queryShopList(shopCondition,rowIndex,pageSize);
         int count = shopDao.queryShopCount(shopCondition);

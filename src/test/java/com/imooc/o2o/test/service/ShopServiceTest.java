@@ -64,7 +64,7 @@ public class ShopServiceTest extends BaseTest {
         PersonInfo owner = new PersonInfo();
         owner.setUserId(10L);
         shopCondition.setOwner(owner);
-        ShopExecution se = shopService.getShopList(shopCondition,2,2);
+        ShopExecution se = shopService.getShopListAndCount(shopCondition,2,2);
         System.out.println("第二页的店铺有: "+se.getShopList().size());
         System.out.println("店铺总数有： "+se.getCount());
     }

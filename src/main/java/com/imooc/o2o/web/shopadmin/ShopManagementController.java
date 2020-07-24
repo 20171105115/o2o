@@ -41,6 +41,71 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
+    /**
+     * 每次从店铺列表进入店铺操作页面时，都要将店铺信息存储到Session中
+     * 为了修改或者是其他操作时，可以获取到shop的信息，比如ShopId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getshopmanagementinfo", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String,Object> getShopManagementInfo(HttpServletRequest request){
+        Map<String,Object> modelMap = new HashMap<>();
+        long shopId = HttpServletRequestUtil.getLong(request,"shopId");
+        if (shopId <= 0){//如果没传递ShopId,则获取session中的shop对象
+            Shop currentShop = (Shop)request.getSession().getAttribute("currentShop");
+            if (currentShop == null){
+                //如果连session中的信息都为空，则说明非法进入，跳转回店铺列表
+                modelMap.put("redirect",true);
+                modelMap.put("url","/o2o/shopadmin/shoplist");
+            }else {
+                //不为空则将shopId传递过去
+                modelMap.put("redirect",false);
+                modelMap.put("shopId",currentShop.getShopId());
+            }
+        }else {
+            //如果shopId不为空，则将其用一个currentShop封装在一起，存储到session中，直到点击到下一次的店铺进行操作
+            Shop currentShop = new Shop();
+            currentShop.setShopId(shopId);
+            request.getSession().setAttribute("currentShop", currentShop);
+            modelMap.put("redirect",false);
+//            modelMap.put("shopId",currentShop.getShopId());
+        }
+        return modelMap;
+    }
+
+    /**
+     * 获取店铺列表
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getshoplist",method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String,Object> getShopList(HttpServletRequest request){
+        Map<String,Object> modelMap = new HashMap<>();
+        //TODO 之后要通过Session获取用户信息来显示其所创的店铺
+        PersonInfo owner = new PersonInfo();
+        owner.setUserId(10L);
+        owner.setName("张三");
+        try {
+            Shop shopCondition = new Shop();
+            shopCondition.setOwner(owner);
+            ShopExecution se = shopService.getShopListAndCount(shopCondition,0,100);
+            modelMap.put("success",true);
+            modelMap.put("shopList",se.getShopList());
+            modelMap.put("user",owner);//在店铺列表上方显示 XXX，欢迎您
+        }catch (Exception e){
+            modelMap.put("success",false);
+            modelMap.put("errMsg",e.getMessage());
+        }
+        return modelMap;
+    }
+
+    /**
+     * 通过ShopId获取店铺信息，显示在修改页面
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getshopbyid",method = RequestMethod.GET)
     private Map<String, Object> getShopById(HttpServletRequest request) {
@@ -60,6 +125,10 @@ public class ShopManagementController {
 
     }
 
+    /**
+     * 获取注册店铺时的初始信息，比如区域信息，商铺类别信息等
+     * @return
+     */
     @RequestMapping(value = "/getshopinitinfo",method = RequestMethod.GET)
     @ResponseBody
     private Map<String,Object> getShopInitInfo(){
