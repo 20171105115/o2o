@@ -1,6 +1,7 @@
 package com.imooc.o2o.dao;
 
 import com.imooc.o2o.entity.ProductCategory;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface ProductCategoryDao {
      * @param productCategoryId
      * @return
      */
-    int deleteProductCategory(long productCategoryId);
+    int deleteProductCategory(@Param("productCategoryId") long productCategoryId,@Param("shopId")long shopId);
 
     /**
      * 批量添加商品分类  （十分重要）

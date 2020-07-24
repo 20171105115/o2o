@@ -8,7 +8,6 @@ import com.imooc.o2o.service.ProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -22,9 +21,29 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         return productCategoryDao.queryProductCategoryList(shopId);
     }
 
+    /**
+     * 先将商品里的商品类别置为空，再删除商品类别
+     * 一、先将商品中的分类Id删除(避免外键约束)
+     * 二、删除该分类
+     * @param productCategoryId
+     * @param shopId
+     * @return
+     */
     @Override
-    public int removeProductCategory(long productCategoryId) {
-        return productCategoryDao.deleteProductCategory(productCategoryId);
+    @Transactional
+    public ProductCategoryExecution removeProductCategory(long productCategoryId, long shopId) {
+        //TODO 将此类别下的商品的商品类别置为空
+        try {
+            int effectedNum = productCategoryDao.deleteProductCategory(productCategoryId, shopId);
+            if (effectedNum <= 0){
+                throw new RuntimeException("商品类别删除失败");
+            }else {
+                return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
+            }
+        }catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
     @Override

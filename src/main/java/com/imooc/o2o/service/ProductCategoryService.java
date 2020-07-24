@@ -18,7 +18,7 @@ public interface ProductCategoryService {
      * @param productCategoryId
      * @return
      */
-    int removeProductCategory(long productCategoryId);
+    ProductCategoryExecution removeProductCategory(long productCategoryId,long shopId);
 
     /**
      * 批量增加商品分类

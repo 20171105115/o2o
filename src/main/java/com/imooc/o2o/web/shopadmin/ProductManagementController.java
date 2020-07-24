@@ -25,6 +25,39 @@ public class ProductManagementController {
     private ProductCategoryService productCategoryService;
 
     /**
+     * 删除商品类别
+     * @param productCategoryId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/removeproductcategory",method = RequestMethod.POST)
+    @ResponseBody
+    private Map<String,Object> removeProductCategory(Long productCategoryId, HttpServletRequest request){
+        Map<String,Object> modelMap = new HashMap<>();
+        Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+        if (productCategoryId != null && productCategoryId >0){
+            try{
+                ProductCategoryExecution pe = productCategoryService.removeProductCategory(productCategoryId,currentShop.getShopId());
+                if (pe.getState() == ProductCategoryStateEnum.SUCCESS.getState()){
+                    modelMap.put("success",true);
+                }else {
+                    modelMap.put("success",false);
+                    modelMap.put("errMsg",pe.getStateInfo());
+                }
+            }catch (Exception e){
+                modelMap.put("success",false);
+                modelMap.put("errMsg",e.getMessage());
+                //抛出异常时不会执行到最下面，只能手动return
+                return modelMap;
+            }
+        }else {
+            modelMap.put("success",false);
+            modelMap.put("errMsg","请传入正确的分类信息");
+        }
+        return modelMap;
+    }
+
+    /**
      * 获取商品类别列表
      * @param request
      * @return

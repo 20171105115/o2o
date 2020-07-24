@@ -13,9 +13,11 @@
         order by priority DESC
     </select>
 
-    <delete id="deleteProductCategory" parameterType="Long">
+    <delete id="deleteProductCategory">
         delete from tb_product_category
-        where product_category_id=#{productCategoryId}
+        where
+        product_category_id=#{productCategoryId}
+        and shop_id=#{shopId}
     </delete>
 
     <insert id="batchInsertProductCategory" parameterType="java.util.List">

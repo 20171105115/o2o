@@ -26,7 +26,7 @@ public class ProductCategoryDaoTest extends BaseTest {
 
     @Test
     public void testDeleteProductCategory(){
-        int i = productCategoryDao.deleteProductCategory(7L);
+        int i = productCategoryDao.deleteProductCategory(7L,39L);
         assertEquals(1,i);
     }
 
