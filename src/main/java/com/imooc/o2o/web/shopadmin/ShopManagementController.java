@@ -3,6 +3,7 @@ package com.imooc.o2o.web.shopadmin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Area;
 import com.imooc.o2o.entity.PersonInfo;
@@ -204,7 +205,8 @@ public class ShopManagementController {
             shop.setOwner(owner);
             ShopExecution se;
             try {
-                se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                ImageHolder thumbnail = new ImageHolder(shopImg.getOriginalFilename(),shopImg.getInputStream());
+                se = shopService.addShop(shop, thumbnail);
                 if (se.getState() == ShopStateEnum.CHECK.getState()) {
                     modelMap.put("success", true);
                     //该用户可以操作的商铺列表,每个店铺创建时都要将其放在session中，以便操作
@@ -281,12 +283,14 @@ public class ShopManagementController {
             shop.setOwner(owner);
             ShopExecution se;
             try {
+                ImageHolder thumbnail;
                 if (shopImg == null){
-                    se = shopService.modifyShop(shop,null,null);
+                    thumbnail = new ImageHolder();
                 }else{
-                    se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
-                }
+                    thumbnail = new ImageHolder(shopImg.getOriginalFilename(),shopImg.getInputStream());
 
+                }
+                se = shopService.modifyShop(shop,thumbnail);
                 if (se.getState() == ShopStateEnum.SUCCESS.getState()) {
                     modelMap.put("success", true);
                 } else {

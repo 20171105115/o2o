@@ -1,5 +1,6 @@
 package com.imooc.o2o.util;
 
+import com.imooc.o2o.dto.ImageHolder;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.slf4j.Logger;
@@ -41,21 +42,20 @@ public class ImageUtil {
 
     /**
      * 处理缩略图并且返回图片的相对子路径
-     * @param shopImgInputStream 输入流
-     * @param fileName 文件名
+     * @param thumbnail
      * @param targetAddr 要存入的路径
      * @return
      */
-    public static String genericThumbnail(InputStream shopImgInputStream,String fileName, String targetAddr){
+    public static String genericThumbnail(ImageHolder thumbnail, String targetAddr){
         String realFileName = getRandomFileName();//取随机文件名
-        String extension = getFileExtension(fileName);//获取文件后缀
+        String extension = getFileExtension(thumbnail.getFileName());//获取文件后缀
         makeDirPath(targetAddr);//创建目标路径
         String relativeAddr = targetAddr + realFileName + extension;//相对路径
         logger.debug("current relativeAddr is:" + relativeAddr);
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);//绝对路径
         logger.debug("current compltet addr is :" + dest.toString());
         try {
-            Thumbnails.of(shopImgInputStream).size(200,200)
+            Thumbnails.of(thumbnail.getFilePath()).size(200,200)
                     .watermark(Positions.BOTTOM_LEFT, ImageIO.read(new File(basePath + "/watermark.jpg")),0.8f)
                     .outputQuality(0.8f).toFile(dest);//存储图片
         }catch (IOException e){
@@ -110,6 +110,32 @@ public class ImageUtil {
             }
             fileOrPath.delete();
         }
+    }
+
+
+    /**
+     * 处理详情图，因为大小不一样
+     * @param thumbnail
+     * @param targetAddr
+     * @return
+     */
+    public static String genericThumbnailOfBigImg(ImageHolder thumbnail, String targetAddr){
+        String realFileName = getRandomFileName();//取随机文件名
+        String extension = getFileExtension(thumbnail.getFileName());//获取文件后缀
+        makeDirPath(targetAddr);//创建目标路径
+        String relativeAddr = targetAddr + realFileName + extension;//相对路径
+        logger.debug("current relativeAddr is:" + relativeAddr);
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);//绝对路径
+        logger.debug("current img compltet addr is :" + dest.toString());
+        try {
+            Thumbnails.of(thumbnail.getFilePath()).size(337,640)
+                    .watermark(Positions.BOTTOM_LEFT, ImageIO.read(new File(basePath + "/watermark.jpg")),0.9f)
+                    .outputQuality(0.8f).toFile(dest);//存储图片
+        }catch (IOException e){
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
+        return relativeAddr;
     }
 
 
