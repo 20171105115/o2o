@@ -53,13 +53,53 @@ public class ProductManagementController {
     private Map<String,Object> getProductList(HttpServletRequest request){
         Map<String,Object> modelMap = new HashMap<>();
         Shop currentShop = (Shop)request.getSession().getAttribute("currentShop");
-        Product productCondition = new Product();
-        //TODO 之后在前端展示界面，还需要传入条件才能提供为用户完整的查询
-        productCondition.setShop(currentShop);
-        List<Product> productList = productService.getProductList(productCondition,1,100);
-        modelMap.put("success",true);
-        modelMap.put("productList",productList);
+        //获取前台传递的页码
+        int pageIndex = HttpServletRequestUtil.getInt(request, "pageIndex");
+        //获取前台传递的条数
+        int pageSize = HttpServletRequestUtil.getInt(request,"pageSize");
+        //获取店铺信息
+
+        if ((pageIndex > -1) && (pageSize > -1) && (currentShop != null) && (currentShop.getShopId()!= null)){
+            //根据传入的条件，来筛选商品分类 （为前台做准备)
+            long productCategoryId = HttpServletRequestUtil.getLong(request,"productCategoryId");
+            String productName = HttpServletRequestUtil.getString(request,"productName");
+            Product productCondition = compactProductCondition(currentShop.getShopId(),productName,productCategoryId);
+            productCondition.setShop(currentShop);
+            ProductExecution pe = productService.getProductList(productCondition,1,100);
+            modelMap.put("success",true);
+            modelMap.put("productList",pe.getProductList());
+            modelMap.put("count",pe.getCount());
+        }else {
+            modelMap.put("success",false);
+            modelMap.put("errMsg","shopId为空");
+        }
         return modelMap;
+    }
+
+    /**
+     * 通过条件，查看前台是否传入了筛选条件，并将其组合在一起
+     *
+     * @param shopId
+     * @param productName
+     * @param productCategoryId
+     * @return
+     */
+    private Product compactProductCondition(Long shopId, String productName, long productCategoryId) {
+        Product productCondition = new Product();
+        if (shopId != null) {
+            Shop shop = new Shop();
+            shop.setShopId(shopId);
+            productCondition.setShop(shop);
+        }
+        if (productName != null){
+            productCondition.setProductName(productName);
+        }
+        if (productCategoryId > -1){
+            ProductCategory productCategory = new ProductCategory();
+            productCategory.setProductCategoryId(productCategoryId);
+            productCondition.setProductCategory(productCategory);
+        }
+        return productCondition;
     }
 
     /**

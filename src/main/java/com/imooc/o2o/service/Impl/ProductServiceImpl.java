@@ -87,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
             product.setLastEditTime(new Date());
             Product productTemp = productDao.queryProductById(product.getProductId());
             //图片不为空
-            if (thumbnail.getFilePath() != null && thumbnail.getFileName() != null && !thumbnail.getFileName().equals("")) {
+            if (thumbnail != null && thumbnail.getFileName() != null && !thumbnail.getFileName().equals("")) {
                 if (productTemp.getImgAddr() != null) {
                     ImageUtil.deleteFileOrPath(productTemp.getImgAddr());
                 }
@@ -150,9 +150,12 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
-    public List<Product> getProductList(Product productCondition,int pageIndex,int pageSize) {
+    public ProductExecution getProductList(Product productCondition,int pageIndex,int pageSize) {
         int rowIndex = PageUtil.pageToRow(pageIndex,pageSize);
-        return productDao.queryProductList(productCondition,rowIndex,pageSize);
+        ProductExecution pe = new ProductExecution();
+        pe.setProductList(productDao.queryProductList(productCondition,rowIndex,pageSize));
+        pe.setCount(productDao.queryProductListOfCount(productCondition));
+        return pe;
     }
 
 
