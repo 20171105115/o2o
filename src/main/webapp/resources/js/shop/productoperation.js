@@ -3,13 +3,13 @@ $(function () {
     //获取商品列表
     var getCategoryUrl = '/o2o/shopadmin/getproductcategorylist';
     //获取商品原来信息
-    var getProductUrl;
+    var getProductUrl = '/o2o/shopadmin/getproductbyid?productId='+productId;
     //是否为修改
     var Flag = false;
     //新增时候的Url
     var addUrl = '/o2o/shopadmin/addproduct';
     //修改时候的Url
-    var editUrl = '/o2o/shopadmin/editproduct';
+    var editUrl = '/o2o/shopadmin/modifyproduct';
 
     if (productId) {
         Flag = true;
@@ -24,10 +24,10 @@ $(function () {
     }
 
     function getInfo(productId) {
-        $.getJSON(getCategoryUrl,function (data) {
+        $.getJSON(getProductUrl,function (data) {
             if (data.success){
                 var product = data.product;
-                $('#product-name').val(product.peoductName);
+                $('#product-name').val(product.productName);
                 $('#product-desc').val(product.productDesc);
                 $('#priority').val(product.priority);
                 $('#normal-price').val(product.normalPrice);
@@ -36,11 +36,18 @@ $(function () {
                 var categoryHtml = '';
                 var categoryList = data.productCategoryList;
                 var optionSelected = product.productCategory.productCategoryId;
-                categoryList.map(function (item) {
-                    var isSelect = optionSelected === item.productCategoryId ? 'selected':'';
-                    categoryHtml += '<option data-value="' + item.productCategoryId + isSelect
-                    + '">' + item.productCategoryName + '</option>';
-                });
+                categoryList
+                    .map(function(item, index) {
+                        var isSelect = optionSelected === item.productCategoryId ? 'selected'
+                            : '';
+                        categoryHtml += '<option data-value="'
+                            + item.productCategoryId
+                            + '"'
+                            + isSelect
+                            + '>'
+                            + item.productCategoryName
+                            + '</option>';
+                    });
                 $('#category').html(categoryHtml);
             }
         })
@@ -73,10 +80,11 @@ $(function () {
         product.normalPrice = $('#normal-price').val();
         product.promotionPrice = $('#promotion-price').val();
         product.productCategory = {
-            productCategoryId: $('#category').find('option').not(function () {
-                return !this.selected;
-            }).data('value')
-        }
+            productCategoryId : $('#category').find('option').not(
+                function() {
+                    return !this.selected;
+                }).data('value')
+        };
 
         //生成表单对象
         var formData = new FormData();
@@ -112,7 +120,7 @@ $(function () {
                 }
             })
         } else {
-            $.toast('请输入验证码')
+            $.toast('请输入验证码');
             return;
         }
     });

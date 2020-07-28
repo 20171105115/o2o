@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,36 @@ public class ProductServiceTest extends BaseTest {
         productImgList.add(thumbnail2);
 
         ProductExecution pe = productService.addProduct(product,thumbnail,productImgList);
+        assertEquals(ProductStateEnum.SUCCESS.getState(),pe.getState());
+    }
+
+    @Test
+    public void testModifyProduct() throws FileNotFoundException {
+        Product product = new Product();
+        product.setProductId(43L);
+        product.setProductName("奔驰");
+        product.setPriority(10);
+
+        Shop shop = new Shop();
+        shop.setShopId(39L);
+        product.setShop(shop);
+
+        File file = new File("/Users/a20171105115/Desktop/image/1.jpg");
+        FileInputStream is = new FileInputStream(file);
+        ImageHolder thumbnail = new ImageHolder(file.getName(),is);
+
+        List<ImageHolder> productImgList = new ArrayList<>();
+        File file1 = new File("/Users/a20171105115/Desktop/image/1.jpg");
+        FileInputStream is1 = new FileInputStream(file1);
+        ImageHolder thumbnail1 = new ImageHolder(file.getName(),is1);
+        productImgList.add(thumbnail1);
+
+        File file2 = new File("/Users/a20171105115/Desktop/image/1.jpg");
+        FileInputStream is2 = new FileInputStream(file2);
+        ImageHolder thumbnail2 = new ImageHolder(file.getName(), is2);
+        productImgList.add(thumbnail2);
+
+        ProductExecution pe = productService.modifyProduct(product,thumbnail,productImgList);
         assertEquals(ProductStateEnum.SUCCESS.getState(),pe.getState());
     }
 }

@@ -1,11 +1,7 @@
 package com.imooc.o2o.test.dao;
 
-import com.imooc.o2o.dao.ProductDao;
 import com.imooc.o2o.dao.ProductImgDao;
-import com.imooc.o2o.entity.Product;
-import com.imooc.o2o.entity.ProductCategory;
 import com.imooc.o2o.entity.ProductImg;
-import com.imooc.o2o.entity.Shop;
 import com.imooc.o2o.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +38,13 @@ public class ProductImgDaoTest extends BaseTest {
         productImgList.add(productImg2);
 
         assertEquals(2,productImgDao.batchInsertProductImg(productImgList));
+    }
+
+
+    @Test
+    public void testDeleteProductImg(){
+        int effectedNum = productImgDao.deleteProductImg(43L);
+        assertEquals(2,effectedNum);
     }
 
 }

@@ -12,7 +12,7 @@ public class CodeUtil {
         );
 
         String verifyCodeActual = HttpServletRequestUtil.getString(request,"verifyCodeActual");
-//        String verifyCodeActual = request.getParameter("verifyCodeActual");
+
 
 
         if (verifyCodeActual==null || !verifyCode.equals(verifyCodeActual)){
